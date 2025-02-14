@@ -26,24 +26,9 @@ suspend fun fetchFlight(passengerName: String): FlightStatus = coroutineScope {
             println("Finished fetching loyalty info")
         }
     }
-    var res = FlightStatus.parse(
+    FlightStatus.parse(
         flightResponse = flightResponse.await(),
         loyaltyResponse = loyaltyResponse.await(),
         passengerName = passengerName
     )
-    while(res.status == "Canceled") {
-        println("Canceled")
-        flightResponse = async {
-            println("Started fetching flight info")
-            client.get<String>(FLIGHT_ENDPOINT).also {
-                println("Finished fetching flight info")
-            }
-        }
-        res = FlightStatus.parse(
-            flightResponse = flightResponse.await(),
-            loyaltyResponse = loyaltyResponse.await(),
-            passengerName = passengerName
-        )
-    }
-    res
 }
